@@ -147,9 +147,9 @@ static void update_proc(Layer *layer, GContext *ctx) {
 
   graphics_context_set_antialiased(ctx, ANTIALIASING);
 
-  // White clockface
+  // White clockface 文字盤
  // graphics_context_set_fill_color(ctx, GColorWhite);
-  graphics_context_set_fill_color(ctx,GColorLiberty);
+  graphics_context_set_fill_color(ctx,GColorOxfordBlue);
   graphics_fill_circle(ctx, s_center, s_radius);
 
   // Draw outline
@@ -186,7 +186,7 @@ static void update_proc(Layer *layer, GContext *ctx) {
   } 
   // minute hand
   if(s_radius > HAND_MARGIN) {
-		graphics_context_set_stroke_color(ctx, GColorBlack);
+		graphics_context_set_stroke_color(ctx, GColorWhite);
     graphics_draw_line(ctx, s_center, minute_hand);
   }
 
