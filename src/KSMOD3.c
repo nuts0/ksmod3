@@ -34,6 +34,14 @@ static char s_day_buffer[6],s_num_buffer[4],s_month_buffer[4] ;
 
 static GPath *s_tick_paths[NUM_CLOCK_TICKS];	//目盛り
 
+//カスタムバイブ設定
+//Create an array of ON-OFF-ON etc durations in milliseconds
+uint32_t segments1[] = {50,90,50,90,50};
+//Create a VibePattern structure with the segments and length of the pattern as fields
+VibePattern pattern1 = {
+    .durations = segments1,
+    .num_segments = ARRAY_LENGTH(segments1),
+};
 
 //------------------------------------------------------------------------------------
 static void date_update_proc(Layer *layer, GContext *ctx) {
@@ -65,6 +73,12 @@ static void handle_battery(BatteryChargeState charge_state) {
 //------------------------------------------------------------------------------------
 static void handle_bluetooth(bool connected) {
   text_layer_set_text(s_connection_layer, connected ? "c" : "d");
+	//切れたらバイブ	
+  if (APP_MSG_NOT_CONNECTED){
+	}else{
+		vibes_enqueue_custom_pattern(pattern1);
+	}
+	
 }
 /*************************** AnimationImplementation **************************/
 static void animation_started(Animation *anim, void *context) {
@@ -101,9 +115,9 @@ static void tick_handler(struct tm *tick_time, TimeUnits changed) {
 //  }
 
 	// Redraw
-//  if(s_canvas_layer) {
-//    layer_mark_dirty(s_canvas_layer);
-//  }
+  if(s_canvas_layer) {
+    layer_mark_dirty(s_canvas_layer);
+  }
 
 }
 //------------------------------------------------------------------------------------
@@ -190,11 +204,11 @@ static void update_proc(Layer *layer, GContext *ctx) {
     graphics_draw_line(ctx, s_center, minute_hand);
   }
 
-	//目盛り	
-  graphics_context_set_fill_color(ctx, GColorLightGray);
-  for (int i = 0; i < NUM_CLOCK_TICKS; ++i) {
-    gpath_draw_filled(ctx, s_tick_paths[i]);
-  }
+		//目盛り	
+graphics_context_set_fill_color(ctx, GColorLightGray);
+for (int i = 0; i < NUM_CLOCK_TICKS; ++i) {
+  gpath_draw_filled(ctx, s_tick_paths[i]);
+}
 	
 	//BATT更新
 	handle_battery(battery_state_service_peek());
@@ -264,6 +278,8 @@ static void window_load(Window *window) {
 	layer_add_child(window_layer, text_layer_get_layer(s_connection_layer));
   layer_add_child(window_layer, text_layer_get_layer(s_battery_layer));
 
+
+	
 }
 //------------------------------------------------------------------------------------
 static void window_unload(Window *window) {
